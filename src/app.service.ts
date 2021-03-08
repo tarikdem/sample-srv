@@ -14,6 +14,6 @@ export class AppService {
         'SELECT version()',
     )
 
-    return `Hello World! PG Version: ${response.version}`;
+    return `Hello World! PG Version: ${response[0].version}`;
   }
 }
