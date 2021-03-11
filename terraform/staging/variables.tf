@@ -7,7 +7,7 @@ variable "region" {
 variable "profile" {
    type = string
    description = "AWS Profile in .credentials"
-   default     = "personal"
+   default     = "default"
 }
 
 # DB Variables
