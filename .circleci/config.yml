@@ -65,7 +65,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecs/update-task-definition
-          family: 'staging-app'
+          family: 'staging'
           cluster-name: 'staging'
 
   build-and-deploy-ecs-production:
@@ -92,5 +92,5 @@ workflows:
                 ignore: /.*/
           requires:
             - aws-ecs/update-task-definition
-          family: 'production-app'
+          family: 'production'
           cluster-name: 'production'
