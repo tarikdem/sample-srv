@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "production_task_definition" {
 }
 
 resource "aws_ecs_service" "production_service" {
-  name            = "production-service"
+  name            = "production-app"
   cluster         = aws_ecs_cluster.production_ecs_cluster.id
   task_definition = aws_ecs_task_definition.production_task_definition.arn
   desired_count   = var.ecs_desired_count

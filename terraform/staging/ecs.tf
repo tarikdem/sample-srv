@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "staging_task_definition" {
 }
 
 resource "aws_ecs_service" "staging_service" {
-  name            = "staging-service"
+  name            = "staging-app"
   cluster         = aws_ecs_cluster.staging_ecs_cluster.id
   task_definition = aws_ecs_task_definition.staging_task_definition.arn
   desired_count   = var.ecs_desired_count
