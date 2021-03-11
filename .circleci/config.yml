@@ -60,12 +60,12 @@ workflows:
       - aws-ecs/update-task-definition:
           requires:
             - aws-ecr/build_and_push_image
-          family: 'staging'
+          family: 'staging-app'
           container-image-name-updates: 'container=app,tag=latest'
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecs/update-task-definition
-          family: 'staging'
+          family: 'staging-app'
           cluster-name: 'staging'
 
   build-and-deploy-ecs-production:
@@ -84,7 +84,7 @@ workflows:
                 ignore: /.*/
           requires:
             - aws-ecr/build_and_push_image
-          family: 'production'
+          family: 'production-app'
           container-image-name-updates: 'container=app,tag=latest'
       - aws-ecs/deploy-service-update:
           filters:
@@ -92,5 +92,5 @@ workflows:
                 ignore: /.*/
           requires:
             - aws-ecs/update-task-definition
-          family: 'production'
+          family: 'production-app'
           cluster-name: 'production'
