@@ -33,10 +33,10 @@ jobs:
     docker:
       - image: circleci/node:12.21
       - image: circleci/postgres:13.2
-          environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: app
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
 
     steps:
       - checkout
