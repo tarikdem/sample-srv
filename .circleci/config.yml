@@ -57,9 +57,14 @@ workflows:
           repo: 'staging'
           region: ${AWS_REGION}
           tag: 'latest'
-      - aws-ecs/deploy-service-update:
+      - aws-ecs/update-task-definition:
           requires:
             - aws-ecr/build_and_push_image
+          family: 'staging'
+          container-image-name-updates: 'container=app,tag=latest'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecs/update-task-definition
           family: 'staging'
           cluster-name: 'staging'
 
@@ -73,11 +78,19 @@ workflows:
           repo: 'production'
           region: ${AWS_REGION}
           tag: 'latest'
-      - aws-ecs/deploy-service-update:
+      - aws-ecs/update-task-definition:
           filters:
             branches:
                 ignore: /.*/
           requires:
             - aws-ecr/build_and_push_image
+          family: 'production'
+          container-image-name-updates: 'container=app,tag=latest'
+      - aws-ecs/deploy-service-update:
+          filters:
+            branches:
+                ignore: /.*/
+          requires:
+            - aws-ecs/update-task-definition
           family: 'production'
           cluster-name: 'production'
