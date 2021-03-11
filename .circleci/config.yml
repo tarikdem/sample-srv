@@ -1,0 +1,75 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@0.0.2
+  aws-ecs: circleci/aws-ecs@0.0.13
+
+references:
+  restore_npm_cache: &restore_npm_cache
+    restore_cache:
+      keys:
+        - v1-dependencies-{{ checksum "package.json" }}
+        - v1-dependencies-
+
+  save_npm_cache: &save_npm_cache
+    save_cache:
+      paths:
+        - node_modules
+      key: v1-dependencies-{{ checksum "package.json" }}
+
+jobs:
+  lint:
+    docker:
+      - image: circleci/node:12.21
+
+    steps:
+      - checkout
+      - *restore_npm_cache
+      - run: npm install
+      - *save_npm_cache
+
+      - run: npm run lint
+
+  test:
+    docker:
+      - image: circleci/node:12.21
+
+    steps:
+      - checkout
+      - *restore_npm_cache
+      - run: npm install
+      - *save_npm_cache
+      - run: npm run test:e2e
+
+workflows:
+  version: 2
+  build-and-deploy-ecs-staging:
+    jobs:
+      - test
+      - aws-ecr/build_and_push_image:
+          requires:
+            - test
+          account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
+          repo: 'staging'
+          region: ${AWS_REGION}
+          tag: 'latest'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build_and_push_image
+          family: 'staging-app'
+          cluster-name: 'staging'
+
+  build-and-deploy-ecs-production:
+    jobs:
+      - test
+      - aws-ecr/build_and_push_image:
+          requires:
+            - test
+          account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
+          repo: 'production'
+          region: ${AWS_REGION}
+          tag: 'latest'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build_and_push_image
+          family: 'production-app'
+          cluster-name: 'production'
