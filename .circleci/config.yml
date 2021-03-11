@@ -32,6 +32,11 @@ jobs:
   test:
     docker:
       - image: circleci/node:12.21
+      - image: circleci/postgres:13.2
+          environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: app
 
     steps:
       - checkout
@@ -60,15 +65,18 @@ workflows:
 
   build-and-deploy-ecs-production:
     jobs:
-      - test
       - aws-ecr/build_and_push_image:
-          requires:
-            - test
+          filters:
+            branches:
+                ignore: /.*/
           account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
           repo: 'production'
           region: ${AWS_REGION}
           tag: 'latest'
       - aws-ecs/deploy-service-update:
+          filters:
+            branches:
+                ignore: /.*/
           requires:
             - aws-ecr/build_and_push_image
           family: 'production-app'
