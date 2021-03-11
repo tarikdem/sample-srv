@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
-  aws-ecr: circleci/aws-ecr@0.0.2
-  aws-ecs: circleci/aws-ecs@0.0.13
+  aws-ecr: circleci/aws-ecr@2.0.0
+  aws-ecs: circleci/aws-ecs@2.0.0
 
 references:
   restore_npm_cache: &restore_npm_cache
@@ -60,7 +60,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build_and_push_image
-          family: 'staging-app'
+          family: 'staging'
           cluster-name: 'staging'
 
   build-and-deploy-ecs-production:
@@ -79,5 +79,5 @@ workflows:
                 ignore: /.*/
           requires:
             - aws-ecr/build_and_push_image
-          family: 'production-app'
+          family: 'production'
           cluster-name: 'production'
